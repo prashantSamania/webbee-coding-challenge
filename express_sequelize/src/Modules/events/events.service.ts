@@ -1,5 +1,7 @@
 import Event from './entities/event.entity';
-
+import Workshop from './entities/workshop.entity';
+import { Sequelize } from 'sequelize-typescript';
+import { Op } from 'sequelize';
 
 export class EventsService {
 
@@ -85,6 +87,20 @@ export class EventsService {
      */
 
   async getEventsWithWorkshops() {
+    var events = await this.getWarmupEvents();
+    events.forEach(element => {
+      Event.update(
+        {
+           workshop: Workshop.findAll({
+            where: {eventId: element.id}
+          })
+        },
+        {
+          where: {id: element.id}
+        }
+        )
+    });
+    return events;
     throw new Error('TODO task 1');
   }
 
